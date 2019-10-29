@@ -7,10 +7,13 @@
           <a href="javascript:;" class="slide-btn slide-prev" @click="prev"></a>
           <div class="head-items">
             <div id="head-hat">
-                <img src='../assets/hat0.png' @click="hatClick(0)"/>
-                <img src='../assets/hat1.png' @click="hatClick(1)"/>
-                <img src='../assets/hat2.png' @click="hatClick(2)"/>
-                <img src='../assets/hat3.png' @click="hatClick(3)"/>
+                <div><img src='../assets/hat0.png' @click="hatClick(0)"/></div>
+                <div><img src='../assets/hat1.png' @click="hatClick(1)"/></div>
+                <div><img src='../assets/hat2.png' @click="hatClick(2)"/></div>
+                <div><img src='../assets/hat3.png' @click="hatClick(3)"/></div>
+                <div><img src='../assets/hat4.png' @click="hatClick(4)"/></div>
+                <div><img src='../assets/hat5.png' @click="hatClick(5)"/></div>
+                <div><img src='../assets/hat6.png' @click="hatClick(6)"/></div>
             </div>
           </div>
           <a href="javascript:;" class="slide-btn slide-next" @click="next"></a>
@@ -41,6 +44,9 @@
         <img id='hat1' src='../assets/hat1.png' />
         <img id='hat2' src='../assets/hat2.png' />
         <img id='hat3' src='../assets/hat3.png' />
+        <img id='hat4' src='../assets/hat4.png' />
+        <img id='hat5' src='../assets/hat5.png' />
+        <img id='hat6' src='../assets/hat6.png' />
       </div>
       <div class="share-mask" v-show="shareMask" @click="changeMask">
           <img src="../assets/share_tips.png" alt="">
@@ -182,33 +188,39 @@ export default {
             let angle,Orientation
             // console.log(file);
             if(!file) return
-            EXIF.getData(file, function () {
-                Orientation = EXIF.getTag(this, "Orientation");
-                switch(Orientation){  
-                    case 6://需要顺时针（向左）90度旋转  
-                        angle = 90
-                        break;  
-                    case 8://需要逆时针（向右）90度旋转  
-                        angle = -90
-                        break; 
-                    case 3://需要180度旋转  
-                        angle = 180
-                        break;
-                } 
-                var reader = new FileReader;
-                if (file) {
-                    reader.readAsDataURL(file);
-                    reader.onload = function() {
-                        img.src = reader.result;
-                        img.onload = function() {
+            var reader = new FileReader;
+            if (file) {
+                reader.readAsDataURL(file);
+                reader.onload = function() {
+                    img.src = reader.result;
+                    img.onload = function() {
+                        EXIF.getData(file, function () {
+                            Orientation = EXIF.getTag(this, "Orientation");
+                            switch(Orientation){  
+                                case 6://需要顺时针（向左）90度旋转  
+                                    _this.angle = 90
+                                    break;  
+                                case 1: 
+                                    _this.angle = 0
+                                    break;  
+                                case 8://需要逆时针（向右）90度旋转  
+                                    _this.angle = -90
+                                    break; 
+                                case 3: 
+                                    _this.angle = 180
+                                    break;
+                            } 
                             _this.img2Cvs(img,angle)
-                        }
+                            document.getElementById("upload").value = null
+                        });
+                        
                     }
-                } else {
-                    img.src = ""
                 }
-                
-            });
+            } else {
+                img.src = ""
+            }
+
+            
         },
         createImg(){
             var exportImg = document.getElementById('export');
@@ -301,11 +313,18 @@ export default {
         font-size: 0;
         text-align: left;
         white-space: nowrap;
+        div{
+            display: inline-block;
+            width: vw(100);
+            height: vw(100);
+            background: #fff;
+            margin-right: vw(40);
+        }
         img{
             width: vw(100);
             height: vw(100);
             vertical-align: top;
-            margin-right: vw(40);
+            
         }
     }
 }
@@ -314,7 +333,7 @@ export default {
     img{
         width: vw(320);
         height: vw(320);
-        border-radius: vw(50);
+        border-radius: vw(10);
     }
 }
 
